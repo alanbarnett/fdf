@@ -6,7 +6,7 @@
 #    By: alan <alanbarnett328@gmail.com>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/12/08 17:06:44 by alan              #+#    #+#              #
-#    Updated: 2019/12/08 17:08:26 by alan             ###   ########.fr        #
+#    Updated: 2020/03/01 06:41:14 by abarnett         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,32 +15,31 @@
 # Includes all needed variables
 include config.mk
 
-C_SRCS :=		$(wildcard $(SRC_DIR)/*.c)
+C_SRCS :=		$(wildcard $(SRCS_DIR)/*.c)
 C_OBJS :=		$(patsubst %.c,%.o,$(C_SRCS))
 C_DEPS :=		$(patsubst %.c,%.d,$(C_SRCS))
-DEPFLAGS +=		-MMD -MT $@
 
-MAKE_LIBRARY :=	make -C $(LIB_DIR) -f $(LIB_MAKEFILE) --no-print-directory
-LIB :=			$(LIB_DIR)/$(LIB_NAME)
-
-.PHONY:			all debug clean fclean re install
+.PHONY:			all debug clean lclean fclean lfclean re install
 
 all: tags $(NAME)
 
-tags: $(C_SRCS) $(LIB_SRCS)
+tags: $(C_SRCS)
 	@- ctags -R
 
 debug: CFLAGS += -DDEBUG_PRINT_ON -g
-debug: all
+debug: re
 
-$(LIB): $(LIB_SRCS)
-	@ $(MAKE_LIBRARY)
+$(LIBMLX): $(shell find $(LIBMLX_DIR) -name "*.c")
+	@ $(MAKE_LIBMLX)
 
-$(NAME): $(LIB) $(C_OBJS)
+$(LIBFT): $(shell find $(LIBFT_DIR) -name "*.c")
+	@ $(MAKE_LIBFT)
+
+$(NAME): $(LIBMLX) $(LIBFT) $(C_OBJS)
 	$(CC) $(CFLAGS) $(C_OBJS) -o $(NAME) $(LDFLAGS)
 
 %.o: %.c Makefile
-	$(CC) $(CFLAGS) $(DEPFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -MMD -MT $@ -c $< -o $@
 
 -include $(C_DEPS)
 
@@ -48,13 +47,15 @@ clean:
 	@- $(RM) $(C_OBJS) $(C_DEPS)
 
 lclean:
-	@- $(MAKE_LIBRARY) clean
+	@- $(MAKE_LIBMLX) clean
+	@- $(MAKE_LIBFT) clean
 
 fclean: clean
 	@- $(RM) $(NAME)
 
 lfclean:
-	@- $(MAKE_LIBRARY) fclean
+	@- $(MAKE_LIBMLX) clean
+	@- $(MAKE_LIBFT) fclean
 
 re: fclean all
 
