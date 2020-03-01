@@ -11,8 +11,10 @@
 /* ************************************************************************** */
 
 #include "ft_mem.h"
+#include "ft_math.h"
 #include "ft_printf.h"
 #include "mlx.h"
+#include <math.h>
 #include <unistd.h>
 
 #define WIDTH 1000
@@ -54,11 +56,55 @@ static struct s_fdf	*fdf_setup()
 	return (data);
 }
 
+int			line_length(int x1, int x2, int y1, int y2)
+{
+	int	x;
+	int	y;
+	int	len;
+
+	x = ft_abs(x1 - x2);
+	y = ft_abs(y1 - y2);
+	len = sqrt(pow(x, 2) + pow(y, 2));
+	return (len);
+}
+
+void		fdf_draw_line(struct s_fdf *data, int x1, int y1, int x2, int y2)
+{
+	double	x;
+	double	y;
+	double	d_x;
+	double	d_y;
+	int		steps;
+	char	*pixel;
+
+	steps = line_length(x1, x2, y1, y2);
+	d_x = ((double)(x2 - x1) / steps);
+	d_y = ((double)(y2 - y1) / steps);
+	x = x1;
+	y = y1;
+	while (steps)
+	{
+		pixel = &(data->img_data[ (data->img_size_line * (int)y) + ((data->img_bits_per_pixel / 8) * (int)x) ]);
+		pixel[3] = 0;
+		pixel[2] = (char)x;
+		pixel[1] = (char)y;
+		pixel[0] = (char)(x + y);
+		y += d_y;
+		x += d_x;
+		--steps;
+	}
+}
+
 void		fdf()
 {
 	struct s_fdf	*data;
 
 	data = fdf_setup();
+	fdf_draw_line(data, 200, 200, 400, 400);
+	fdf_draw_line(data, 400, 400, 2, 90);
+	fdf_draw_line(data, 2, 90, 300, 150);
+	fdf_draw_line(data, 300, 150, 200, 200);
+	mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->img_ptr, 0, 0);
 	mlx_loop(data->mlx_ptr);
 }
 
