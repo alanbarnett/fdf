@@ -6,7 +6,7 @@
 /*   By: alan <alanbarnett328@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/08 17:24:12 by alan              #+#    #+#             */
-/*   Updated: 2020/03/01 07:29:44 by abarnett         ###   ########.fr       */
+/*   Updated: 2020/03/02 19:30:52 by abarnett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,13 @@ struct s_fdf
 	char	*img_data;
 	int		img_bits_per_pixel;
 	int		img_size_line;
+};
+
+struct s_point
+{
+	int	x;
+	int	y;
+	int	z;
 };
 
 static void	show_usage(void)
@@ -56,41 +63,56 @@ static struct s_fdf	*fdf_setup()
 	return (data);
 }
 
-int			line_length(int x1, int x2, int y1, int y2)
+int			line_length(struct s_point start, struct s_point end)
 {
 	int	x;
 	int	y;
+	int	z;
 	int	len;
 
-	x = ft_abs(x1 - x2);
-	y = ft_abs(y1 - y2);
+	x = ft_abs(start.x - end.x);
+	y = ft_abs(start.y - end.y);
+	z = ft_abs(start.z - end.z);
 	len = sqrt(pow(x, 2) + pow(y, 2));
+	len = sqrt(pow(len, 2) + pow(z, 2));
 	return (len);
 }
 
-void		fdf_draw_line(struct s_fdf *data, int x1, int y1, int x2, int y2)
+void		fdf_put_pixel(struct s_fdf *data, int x, int y, int z)
+{
+	char	*pixel;
+
+	pixel = &(data->img_data[ (data->img_size_line * (int)y) + ((data->img_bits_per_pixel / 8) * (int)x) ]);
+	pixel[3] = 0;
+	pixel[2] = z * 20;
+	pixel[1] = 0x20;
+	pixel[0] = 0xa0;
+	(void)z;
+}
+
+void		fdf_draw_line(struct s_fdf *data, struct s_point start, struct s_point end)
 {
 	double	x;
 	double	y;
+	double	z;
 	double	d_x;
 	double	d_y;
+	double	d_z;
 	int		steps;
-	char	*pixel;
 
-	steps = line_length(x1, x2, y1, y2);
-	d_x = ((double)(x2 - x1) / steps);
-	d_y = ((double)(y2 - y1) / steps);
-	x = x1;
-	y = y1;
+	steps = line_length(start, end);
+	d_x = ((double)(end.x - start.x) / steps);
+	d_y = ((double)(end.y - start.y) / steps);
+	d_z = ((double)(end.z - start.z) / steps);
+	x = start.x;
+	y = start.y;
+	z = start.z;
 	while (steps)
 	{
-		pixel = &(data->img_data[ (data->img_size_line * (int)y) + ((data->img_bits_per_pixel / 8) * (int)x) ]);
-		pixel[3] = 0;
-		pixel[2] = (char)x;
-		pixel[1] = (char)y;
-		pixel[0] = (char)(x + y);
-		y += d_y;
+		fdf_put_pixel(data, x, y, z);
 		x += d_x;
+		y += d_y;
+		z += d_z;
 		--steps;
 	}
 }
@@ -100,10 +122,23 @@ void		fdf()
 	struct s_fdf	*data;
 
 	data = fdf_setup();
-	fdf_draw_line(data, 200, 200, 400, 400);
-	fdf_draw_line(data, 400, 400, 2, 90);
-	fdf_draw_line(data, 2, 90, 300, 150);
-	fdf_draw_line(data, 300, 150, 200, 200);
+	struct s_point start = {
+		200,
+		200,
+		0
+	};
+	struct s_point end = {
+		400,
+		400,
+		10
+	};
+	struct s_point after = {
+		600,
+		600,
+		0
+	};
+	fdf_draw_line(data, start, end);
+	fdf_draw_line(data, end, after);
 	mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->img_ptr, 0, 0);
 	mlx_loop(data->mlx_ptr);
 }
