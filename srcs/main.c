@@ -6,7 +6,7 @@
 /*   By: alan <alanbarnett328@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/08 17:24:12 by alan              #+#    #+#             */
-/*   Updated: 2020/03/05 03:26:31 by abarnett         ###   ########.fr       */
+/*   Updated: 2020/03/05 03:43:41 by abarnett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@ struct s_fdf
 	int		img_bits_per_pixel;
 	int		img_size_line;
 	int		scale;
+	int		cam_x;
+	int		cam_y;
 };
 
 struct s_point
@@ -68,6 +70,8 @@ static struct s_fdf	*fdf_setup()
 	data->img_ptr = mlx_new_image(data->mlx_ptr, WIDTH, HEIGHT);
 	data->img_data = mlx_get_data_addr(data->img_ptr, &(data->img_bits_per_pixel), &(data->img_size_line), &endian);
 	data->scale = 25;
+	data->cam_x = 100;
+	data->cam_y = 100;
 	return (data);
 }
 
@@ -86,13 +90,29 @@ int			line_length(struct s_point start, struct s_point end)
 	return (len);
 }
 
+#define PI (22/7)
+
 void		fdf_put_pixel(struct s_fdf *data, int x, int y, int z)
 {
 	char	*pixel;
 
-	pixel = &(data->img_data[ (data->img_size_line * (int)y) + ((data->img_bits_per_pixel / 8) * (int)x) ]);
+	double	t_x = (double)PI / 4;
+	double	t_y = 0;
+
+	int		new_x;
+	int		new_y;
+
+	new_x = x * cos(t_y);
+	new_x += z * sin(t_y);
+	new_y = y * cos(t_x);
+	new_y += z * sin(t_x);
+
+	new_x += data->cam_x;
+	new_y += data->cam_y;
+
+	pixel = &(data->img_data[ (data->img_size_line * new_y) + ((data->img_bits_per_pixel / 8) * new_x) ]);
 	pixel[3] = 0;
-	pixel[2] = z;
+	pixel[2] = ft_min(z * 2, 255);
 	pixel[1] = 0x20;
 	pixel[0] = 0xa0;
 }
