@@ -6,9 +6,11 @@
 /*   By: alan <alanbarnett328@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/08 17:24:12 by alan              #+#    #+#             */
-/*   Updated: 2020/03/02 19:30:52 by abarnett         ###   ########.fr       */
+/*   Updated: 2020/03/05 02:39:44 by abarnett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#include "fdf.h"
 
 #include "ft_mem.h"
 #include "ft_math.h"
@@ -117,42 +119,47 @@ void		fdf_draw_line(struct s_fdf *data, struct s_point start, struct s_point end
 	}
 }
 
-void		fdf()
+void		print_map(int **map, int size)
+{
+	for (int i = 0; map[i]; ++i)
+	{
+		for (int j = 0; j < size; ++j)
+		{
+			ft_printf("%d ", map[i][j]);
+		}
+		ft_printf("\n");
+	}
+}
+
+void		fdf(int **map, int width)
 {
 	struct s_fdf	*data;
 
 	data = fdf_setup();
-	struct s_point start = {
-		200,
-		200,
-		0
-	};
-	struct s_point end = {
-		400,
-		400,
-		10
-	};
-	struct s_point after = {
-		600,
-		600,
-		0
-	};
-	fdf_draw_line(data, start, end);
-	fdf_draw_line(data, end, after);
+	print_map(map, width);
 	mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->img_ptr, 0, 0);
 	mlx_loop(data->mlx_ptr);
 }
 
 int			main(int argc, char **argv)
 {
+	int	**map;
+	int	size;
+
+	map = 0;
+	size = 0;
 	if (argc == 2)
 	{
 		ft_printf("%s!\n", argv[1]);
+		map = get_grid(argv[1], &size);
+		if (!map)
+			ft_printf("bad map!\n");
+		else
+			fdf(map, size);
 	}
 	else
 	{
 		show_usage();
 	}
-	fdf();
 	return (0);
 }
