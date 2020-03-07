@@ -6,7 +6,7 @@
 /*   By: alan <alanbarnett328@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/08 17:24:12 by alan              #+#    #+#             */
-/*   Updated: 2020/03/05 04:05:03 by abarnett         ###   ########.fr       */
+/*   Updated: 2020/03/06 21:30:20 by abarnett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,9 @@ struct s_fdf
 	int		scale;
 	int		cam_x;
 	int		cam_y;
+	double	theta_x;
+	double	theta_y;
+	double	theta_z;
 };
 
 struct s_point
@@ -70,8 +73,11 @@ static struct s_fdf	*fdf_setup()
 	data->img_ptr = mlx_new_image(data->mlx_ptr, WIDTH, HEIGHT);
 	data->img_data = mlx_get_data_addr(data->img_ptr, &(data->img_bits_per_pixel), &(data->img_size_line), &endian);
 	data->scale = 25;
-	data->cam_x = 300;
-	data->cam_y = 300;
+	data->cam_x = WIDTH / 2;
+	data->cam_y = HEIGHT / 2;
+	data->theta_x = 0;
+	data->theta_y = 0;
+	data->theta_z = 0;
 	return (data);
 }
 
@@ -90,31 +96,27 @@ int			line_length(struct s_point start, struct s_point end)
 	return (len);
 }
 
-#define PI (22/7)
+#define PI (3.14159265358979f)
 
 void		fdf_put_pixel(struct s_fdf *data, int x, int y, int z)
 {
 	char	*pixel;
 
-	double	t_x = (double)PI / 4;
-	double	t_y = (double)PI / 4;
-	double	t_z = (double)PI / 4;
+	double	new_x;
+	double	new_y;
 
-	int		new_x;
-	int		new_y;
+	new_x = x * cos(data->theta_y);
+	new_x += z * sin(data->theta_y);
+	new_x -= (x * sin(data->theta_z) + y * sin(data->theta_z));
 
-	new_x = x * cos(t_y);
-	new_x += z * sin(t_y);
-	new_x -= (x * sin(t_z) + y * sin(t_z));
-
-	new_y = y * cos(t_x);
-	new_y += z * sin(t_x);
-	new_y -= (y * sin(t_z) - x * sin(t_z));
+	new_y = y * cos(data->theta_x);
+	new_y += z * sin(data->theta_x);
+	new_y -= (y * sin(data->theta_z) - x * sin(data->theta_z));
 
 	new_x += data->cam_x;
 	new_y += data->cam_y;
 
-	pixel = &(data->img_data[ (data->img_size_line * new_y) + ((data->img_bits_per_pixel / 8) * new_x) ]);
+	pixel = &(data->img_data[ (data->img_size_line * (int)new_y) + ((data->img_bits_per_pixel / 8) * (int)new_x) ]);
 	pixel[3] = 0;
 	pixel[2] = ft_min(z * 2, 255);
 	pixel[1] = 0x20;
