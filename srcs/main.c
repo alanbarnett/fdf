@@ -6,7 +6,7 @@
 /*   By: alan <alanbarnett328@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/08 17:24:12 by alan              #+#    #+#             */
-/*   Updated: 2020/03/06 22:55:02 by abarnett         ###   ########.fr       */
+/*   Updated: 2020/03/07 00:18:06 by abarnett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,6 +148,9 @@ void		fdf_put_pixel(struct s_fdf *data, int x, int y, int z)
 
 	new_x += data->cam_x;
 	new_y += data->cam_y;
+
+	if (new_x < 0 || new_x >= WIDTH || new_y < 0 || new_y >= HEIGHT)
+		return ;
 
 	pixel = &(data->img_data[ (data->img_size_line * (int)new_y) + ((data->img_bits_per_pixel / 8) * (int)new_x) ]);
 	pixel[3] = 0;
