@@ -6,7 +6,7 @@
 /*   By: alan <alanbarnett328@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/08 17:24:12 by alan              #+#    #+#             */
-/*   Updated: 2020/03/06 21:30:20 by abarnett         ###   ########.fr       */
+/*   Updated: 2020/03/06 21:43:54 by abarnett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,9 @@ struct s_fdf
 	void	*win_ptr;
 	void	*img_ptr;
 	char	*img_data;
+	int		**map;
+	int		map_width;
+	int		map_height;
 	int		img_bits_per_pixel;
 	int		img_size_line;
 	int		scale;
@@ -54,6 +57,22 @@ static void	show_usage(void)
 }
 
 /*
+** Gets the height of the map. Used for centering the map on screen.
+*/
+
+static int			get_map_height(int **map)
+{
+	int	i;
+
+	i = 0;
+	while (map[i])
+	{
+		++i;
+	}
+	return (i);
+}
+
+/*
 ** Creates the mlx connection, window, and image I will be using. Gets the data
 ** about the image as well, so it is ready to use.
 **
@@ -62,7 +81,7 @@ static void	show_usage(void)
 ** between each node of the wireframe.
 */
 
-static struct s_fdf	*fdf_setup()
+static struct s_fdf	*fdf_setup(int **map, int width)
 {
 	struct s_fdf	*data;
 	int				endian;
@@ -72,6 +91,9 @@ static struct s_fdf	*fdf_setup()
 	data->win_ptr = mlx_new_window(data->mlx_ptr, WIDTH, HEIGHT, "fdf - abarnett");
 	data->img_ptr = mlx_new_image(data->mlx_ptr, WIDTH, HEIGHT);
 	data->img_data = mlx_get_data_addr(data->img_ptr, &(data->img_bits_per_pixel), &(data->img_size_line), &endian);
+	data->map = map;
+	data->map_width = width;
+	data->map_height = get_map_height(map);
 	data->scale = 25;
 	data->cam_x = WIDTH / 2;
 	data->cam_y = HEIGHT / 2;
@@ -162,35 +184,44 @@ void		print_map(int **map, int size)
 	}
 }
 
-void		draw_map_line(struct s_fdf *data, int **map, int x1, int x2, int y1, int y2)
+/*
+** Shift coordinates by half the width and height of the map, to center it in
+** the coordinate plane. Then project it by scale to make it larger.
+*/
+
+void		draw_map_line(struct s_fdf *data, int x1, int x2, int y1, int y2)
 {
 	struct s_point	start;
 	struct s_point	end;
 
+	start.z = data->map[y1][x1] * data->scale;
+	end.z = data->map[y2][x2] * data->scale;
+	x1 -= (data->map_width / 2);
+	x2 -= (data->map_width / 2);
+	y1 -= (data->map_height / 2);
+	y2 -= (data->map_height / 2);
 	start.x = x1 * data->scale;
 	start.y = y1 * data->scale;
-	start.z = map[y1][x1] * data->scale;
 	end.x = x2 * data->scale;
 	end.y = y2 * data->scale;
-	end.z = map[y2][x2] * data->scale;
 	fdf_draw_line(data, start, end);
 }
 
-void		draw_map(struct s_fdf *data, int **map, int width)
+void		draw_map(struct s_fdf *data)
 {
-	for (int i = 0; map[i]; ++i)
+	for (int i = 0; data->map[i]; ++i)
 	{
-		for (int j = 0; j < width; ++j)
+		for (int j = 0; j < data->map_width; ++j)
 		{
 			// draw line forward
-			if (j + 1 < width)
+			if (j + 1 < data->map_width)
 			{
-				draw_map_line(data, map, j, j + 1, i, i);
+				draw_map_line(data, j, j + 1, i, i);
 			}
 			// draw line down
-			if (map[i + 1])
+			if (data->map[i + 1])
 			{
-				draw_map_line(data, map, j, j, i, i + 1);
+				draw_map_line(data, j, j, i, i + 1);
 			}
 		}
 	}
@@ -200,9 +231,9 @@ void		fdf(int **map, int width)
 {
 	struct s_fdf	*data;
 
-	data = fdf_setup();
+	data = fdf_setup(map, width);
 	print_map(map, width);
-	draw_map(data, map, width);
+	draw_map(data);
 	mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->img_ptr, 0, 0);
 	mlx_loop(data->mlx_ptr);
 }
