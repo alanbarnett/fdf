@@ -279,6 +279,49 @@ void		rotate_z_pos(struct s_fdf *data)
 	data->theta_z = (data->theta_z + data->rotation_speed) % 360;
 }
 
+void		zoom_in(struct s_fdf *data)
+{
+	if (data->scale <= 100)
+		data->scale += 5;
+}
+
+void		zoom_out(struct s_fdf *data)
+{
+	if (data->scale >= 0)
+		data->scale -= 5;
+}
+
+void		move_left(struct s_fdf *data)
+{
+	data->cam_x -= data->rotation_speed;
+}
+
+void		move_right(struct s_fdf *data)
+{
+	data->cam_x += data->rotation_speed;
+}
+
+void		move_up(struct s_fdf *data)
+{
+	data->cam_y -= data->rotation_speed;
+}
+
+void		move_down(struct s_fdf *data)
+{
+	data->cam_y += data->rotation_speed;
+}
+
+void		reset_cam(struct s_fdf *data)
+{
+	data->scale = 20;
+	data->cam_x = WIDTH / 2;
+	data->cam_y = HEIGHT / 2;
+	data->theta_x = 0;
+	data->theta_y = 0;
+	data->theta_z = 0;
+	data->rotation_speed = 10;
+}
+
 int			keycode_func(int keycode, struct s_fdf *data)
 {
 	static void	(*key_funcs[128])() = {
@@ -288,6 +331,13 @@ int			keycode_func(int keycode, struct s_fdf *data)
 		[124] = rotate_y_pos,
 		[125] = rotate_x_neg,
 		[126] = rotate_x_pos,
+		[34] = zoom_in,
+		[31] = zoom_out,
+		[4] = move_left,
+		[37] = move_right,
+		[40] = move_up,
+		[38] = move_down,
+		[15] = reset_cam,
 	};
 	ft_printf("keycode: %d\n", keycode);
 	if (keycode < 128 && key_funcs[keycode])
@@ -302,8 +352,6 @@ void		fdf(int **map, int width)
 
 	data = fdf_setup(map, width);
 	print_map(map, width);
-	data->theta_x = 50;
-	data->theta_z = 50;
 	draw_image(data);
 	mlx_key_hook(data->win_ptr, keycode_func, data);
 	mlx_loop(data->mlx_ptr);
