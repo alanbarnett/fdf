@@ -6,7 +6,7 @@
 /*   By: alan <alanbarnett328@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/08 17:24:12 by alan              #+#    #+#             */
-/*   Updated: 2020/03/06 21:43:54 by abarnett         ###   ########.fr       */
+/*   Updated: 2020/03/06 22:55:02 by abarnett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,11 +34,12 @@ struct s_fdf
 	int		img_bits_per_pixel;
 	int		img_size_line;
 	int		scale;
+	int		rotation_speed;
 	int		cam_x;
 	int		cam_y;
-	double	theta_x;
-	double	theta_y;
-	double	theta_z;
+	int		theta_x;
+	int		theta_y;
+	int		theta_z;
 };
 
 struct s_point
@@ -94,7 +95,8 @@ static struct s_fdf	*fdf_setup(int **map, int width)
 	data->map = map;
 	data->map_width = width;
 	data->map_height = get_map_height(map);
-	data->scale = 25;
+	data->scale = 20;
+	data->rotation_speed = 10;
 	data->cam_x = WIDTH / 2;
 	data->cam_y = HEIGHT / 2;
 	data->theta_x = 0;
@@ -127,13 +129,22 @@ void		fdf_put_pixel(struct s_fdf *data, int x, int y, int z)
 	double	new_x;
 	double	new_y;
 
-	new_x = x * cos(data->theta_y);
-	new_x += z * sin(data->theta_y);
-	new_x -= (x * sin(data->theta_z) + y * sin(data->theta_z));
+	double	theta_x;
+	double	theta_y;
+	double	theta_z;
 
-	new_y = y * cos(data->theta_x);
-	new_y += z * sin(data->theta_x);
-	new_y -= (y * sin(data->theta_z) - x * sin(data->theta_z));
+	// Converting standard angles to radians
+	theta_x = (data->theta_x * PI) / 180;
+	theta_y = (data->theta_y * PI) / 180;
+	theta_z = (data->theta_z * PI) / 180;
+
+	new_x = x * cos(theta_y);
+	new_x += z * sin(theta_y);
+	new_x -= (x * sin(theta_z) + y * sin(theta_z));
+
+	new_y = y * cos(theta_x);
+	new_y += z * sin(theta_x);
+	new_y -= (y * sin(theta_z) - x * sin(theta_z));
 
 	new_x += data->cam_x;
 	new_y += data->cam_y;
@@ -229,6 +240,7 @@ void		draw_map(struct s_fdf *data)
 
 int			draw_image(struct s_fdf *data)
 {
+	ft_bzero(data->img_data, (WIDTH * HEIGHT * (data->img_bits_per_pixel / 8)));
 	draw_map(data);
 	mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->img_ptr, 0, 0);
 	return (0);
@@ -236,27 +248,39 @@ int			draw_image(struct s_fdf *data)
 
 void		rotate_y_neg(struct s_fdf *data)
 {
-	data->theta_y -= (PI / 8);
+	data->theta_y = (data->theta_y - data->rotation_speed) % 360;
 }
 
 void		rotate_y_pos(struct s_fdf *data)
 {
-	data->theta_y += (PI / 8);
+	data->theta_y = (data->theta_y + data->rotation_speed) % 360;
 }
 
 void		rotate_x_neg(struct s_fdf *data)
 {
-	data->theta_x -= (PI / 8);
+	data->theta_x = (data->theta_x - data->rotation_speed) % 360;
 }
 
 void		rotate_x_pos(struct s_fdf *data)
 {
-	data->theta_x += (PI / 8);
+	data->theta_x = (data->theta_x + data->rotation_speed) % 360;
 }
 
-int			rotate_x(int keycode, struct s_fdf *data)
+void		rotate_z_neg(struct s_fdf *data)
+{
+	data->theta_z = (data->theta_z - data->rotation_speed) % 360;
+}
+
+void		rotate_z_pos(struct s_fdf *data)
+{
+	data->theta_z = (data->theta_z + data->rotation_speed) % 360;
+}
+
+int			keycode_func(int keycode, struct s_fdf *data)
 {
 	static void	(*key_funcs[128])() = {
+		[43] = rotate_z_neg,
+		[47] = rotate_z_pos,
 		[123] = rotate_y_neg,
 		[124] = rotate_y_pos,
 		[125] = rotate_x_neg,
@@ -275,11 +299,10 @@ void		fdf(int **map, int width)
 
 	data = fdf_setup(map, width);
 	print_map(map, width);
-	data->theta_x = (-PI / 4);
-	data->theta_z = (PI / 4);
+	data->theta_x = 50;
+	data->theta_z = 50;
 	draw_image(data);
-	mlx_key_hook(data->win_ptr, rotate_x, data);
-	mlx_expose_hook(data->win_ptr, draw_image, data);
+	mlx_key_hook(data->win_ptr, keycode_func, data);
 	mlx_loop(data->mlx_ptr);
 }
 
