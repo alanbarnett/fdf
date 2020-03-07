@@ -227,14 +227,59 @@ void		draw_map(struct s_fdf *data)
 	}
 }
 
+int			draw_image(struct s_fdf *data)
+{
+	draw_map(data);
+	mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->img_ptr, 0, 0);
+	return (0);
+}
+
+void		rotate_y_neg(struct s_fdf *data)
+{
+	data->theta_y -= (PI / 8);
+}
+
+void		rotate_y_pos(struct s_fdf *data)
+{
+	data->theta_y += (PI / 8);
+}
+
+void		rotate_x_neg(struct s_fdf *data)
+{
+	data->theta_x -= (PI / 8);
+}
+
+void		rotate_x_pos(struct s_fdf *data)
+{
+	data->theta_x += (PI / 8);
+}
+
+int			rotate_x(int keycode, struct s_fdf *data)
+{
+	static void	(*key_funcs[128])() = {
+		[123] = rotate_y_neg,
+		[124] = rotate_y_pos,
+		[125] = rotate_x_neg,
+		[126] = rotate_x_pos,
+	};
+	ft_printf("keycode: %d\n", keycode);
+	if (keycode < 128 && key_funcs[keycode])
+		key_funcs[keycode](data);
+	draw_image(data);
+	return (0);
+}
+
 void		fdf(int **map, int width)
 {
 	struct s_fdf	*data;
 
 	data = fdf_setup(map, width);
 	print_map(map, width);
-	draw_map(data);
-	mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->img_ptr, 0, 0);
+	data->theta_x = (-PI / 4);
+	data->theta_z = (PI / 4);
+	draw_image(data);
+	mlx_key_hook(data->win_ptr, rotate_x, data);
+	mlx_expose_hook(data->win_ptr, draw_image, data);
 	mlx_loop(data->mlx_ptr);
 }
 
