@@ -6,7 +6,7 @@
 /*   By: abarnett <alanbarnett328@gmail.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 01:43:43 by abarnett          #+#    #+#             */
-/*   Updated: 2020/03/08 04:03:28 by abarnett         ###   ########.fr       */
+/*   Updated: 2020/03/08 05:22:41 by abarnett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@
 ** rotation of the coordinate plane
 */
 
+#define Z_EXPANSION (10)
+
 static void	fdf_put_pixel(struct s_fdf *data, double x, double y, double z)
 {
 	char	*pixel;
@@ -40,16 +42,26 @@ static void	fdf_put_pixel(struct s_fdf *data, double x, double y, double z)
 	theta_x = (data->theta_x * M_PI) / 180;
 	theta_y = (data->theta_y * M_PI) / 180;
 	theta_z = (data->theta_z * M_PI) / 180;
+	//
+
+	new_x = x;
+	new_y = y;
+	new_z = z;
 
 	// Rotations
-	new_x = x * cos(theta_y) * cos(theta_z);
-	new_y = y * cos(theta_x) * cos(theta_z);
-	new_z = z * cos(theta_y) * cos(theta_x);
+	// X coordinate
+	new_x *= cos(theta_y);
+	new_x *= cos(theta_z);
+	new_x += y * sin(theta_z);
+	// Y coordinate
+	new_y *= cos(theta_x);
+	new_y *= cos(theta_z);
+	new_y -= x * sin(theta_z);
 	//
 
 	// Projection
-	//new_x = new_x;
-	//new_y = new_y;
+	new_x = new_x + (new_z / Z_EXPANSION);
+	new_y = new_y - (new_z / Z_EXPANSION);
 	//
 
 	new_x += data->cam_x;
