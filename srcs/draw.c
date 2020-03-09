@@ -6,7 +6,7 @@
 /*   By: abarnett <alanbarnett328@gmail.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 01:43:43 by abarnett          #+#    #+#             */
-/*   Updated: 2020/03/08 05:22:41 by abarnett         ###   ########.fr       */
+/*   Updated: 2020/03/08 19:57:13 by abarnett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,6 @@
 ** Applies transformations based on the position of the camera, and the
 ** rotation of the coordinate plane
 */
-
-#define Z_EXPANSION (10)
 
 static void	fdf_put_pixel(struct s_fdf *data, double x, double y, double z)
 {
@@ -60,8 +58,8 @@ static void	fdf_put_pixel(struct s_fdf *data, double x, double y, double z)
 	//
 
 	// Projection
-	new_x = new_x + (new_z / Z_EXPANSION);
-	new_y = new_y - (new_z / Z_EXPANSION);
+	new_x = new_x + (new_z * sin(theta_y));
+	new_y = new_y + (new_z * sin(theta_x));
 	//
 
 	new_x += data->cam_x;
