@@ -6,7 +6,7 @@
 /*   By: abarnett <alanbarnett328@gmail.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 01:10:30 by abarnett          #+#    #+#             */
-/*   Updated: 2020/03/07 01:37:01 by abarnett         ###   ########.fr       */
+/*   Updated: 2020/03/08 19:45:34 by abarnett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@
 # define KEY_R (15)
 # define KEY_I (34)
 # define KEY_O (31)
-# define KEY_COMM (43)
+# define KEY_COMMA (43)
 # define KEY_PERIOD (47)
 
 struct s_fdf;

@@ -6,7 +6,7 @@
 /*   By: abarnett <alanbarnett328@gmail.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 01:01:00 by abarnett          #+#    #+#             */
-/*   Updated: 2020/03/07 07:01:55 by abarnett         ###   ########.fr       */
+/*   Updated: 2020/03/08 19:54:18 by abarnett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,5 +89,5 @@ void	reset_cam(struct s_fdf *data)
 	data->theta_x = 0;
 	data->theta_y = 0;
 	data->theta_z = 0;
-	data->rotation_speed = 10;
+	data->rotation_speed = 1;
 }
