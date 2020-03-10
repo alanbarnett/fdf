@@ -6,12 +6,14 @@
 /*   By: abarnett <alanbarnett328@gmail.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 05:41:39 by abarnett          #+#    #+#             */
-/*   Updated: 2020/04/16 03:08:34 by alan             ###   ########.fr       */
+/*   Updated: 2020/04/29 06:37:25 by alan             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FDF_DRAW_H
 # define FDF_DRAW_H
+
+struct s_fdf;
 
 struct s_point
 {

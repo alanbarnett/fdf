@@ -6,40 +6,31 @@
 /*   By: alan <alanbarnett328@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/08 17:24:12 by alan              #+#    #+#             */
-/*   Updated: 2020/03/07 07:02:15 by abarnett         ###   ########.fr       */
+/*   Updated: 2020/05/01 07:30:15 by alan             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "fdf.h"
+#include "fdf_graph.h"
 #include "ft_printf.h"
 #include <unistd.h> //stderr_fileno
+#include <math.h>
 
 static void	show_usage(void)
 {
-	ft_printfd(STDERR_FILENO, "%s\n%s\n%s\n",
-			"usage: fdf filename.fdf",
-			"Takes a single filename argument",
-			"For an example of an fdf file, see mini42.fdf");
+	ft_printfd(STDERR_FILENO, "%s\n%s\n",
+			"usage: fdf",
+			"Will draw a 3D graph of the compiled function");
 }
 
-int			main(int argc, char **argv)
+double			f_z(double x, double y)
 {
-	int	**map;
-	int	size;
+	return (sin(x) + sin(y));
+	//return (cos(x) + cos(y));
+}
 
-	map = 0;
-	size = 0;
-	if (argc == 2)
-	{
-		map = file_to_fdf_map(argv[1], &size);
-		if (!map)
-			ft_printfd(STDERR_FILENO, "Error: Invalid map!\n");
-		else
-			fdf(map, size);
-	}
-	else
-	{
-		show_usage();
-	}
+int			main(void)
+{
+	show_usage();
+	fdf_graph(f_z, M_PI * 2, M_PI * 2);
 	return (0);
 }

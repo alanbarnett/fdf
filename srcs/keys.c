@@ -6,7 +6,7 @@
 /*   By: abarnett <alanbarnett328@gmail.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 01:01:00 by abarnett          #+#    #+#             */
-/*   Updated: 2020/04/28 10:43:31 by alan             ###   ########.fr       */
+/*   Updated: 2020/04/29 06:39:37 by alan             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ int		rotate(struct s_fdf *data)
 		return (0);
 	rotate_x_pos(data);
 	rotate_z_pos(data);
-	draw_image(data);
+	draw_image_graph(data);
 	usleep(ROTATION_SPEED_MS);
 	return (0);
 }
@@ -104,8 +104,7 @@ void	reset_cam(struct s_fdf *data)
 {
 	int	max_width;
 
-	max_width = (data->map_width > data->map_height ? \
-			data->map_width : data->map_height);
+	max_width = (data->width > data->height ? data->width : data->height);
 	data->scale = (WIDTH * 0.80) / max_width;
 	data->rotation_speed = ROTATION_DEGREES;
 	data->cam_x = 0;

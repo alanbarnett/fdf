@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   fdf.c                                              :+:      :+:    :+:   */
+/*   fdf_graph.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abarnett <alanbarnett328@gmail.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 00:25:11 by abarnett          #+#    #+#             */
-/*   Updated: 2020/05/02 00:09:11 by alan             ###   ########.fr       */
+/*   Updated: 2020/05/02 03:58:27 by alan             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,31 @@
 #include "draw.h"
 #include "fdf_keys.h"
 #include "mlx.h"
+#include "ft_mem.h"
+
+static void			decrease_steps(struct s_fdf *data)
+{
+	if (data->steps > 10)
+		data->steps -= 10;
+}
+
+static void			increase_steps(struct s_fdf *data)
+{
+	if (data->steps < 1000)
+		data->steps += 10;
+}
+
+static void			decrease_rotation_speed(struct s_fdf *data)
+{
+	if (data->rotation_speed > 1)
+		data->rotation_speed -= 1;
+}
+
+static void			increase_rotation_speed(struct s_fdf *data)
+{
+	if (data->rotation_speed < 20)
+		data->rotation_speed += 1;
+}
 
 /*
 ** Jump table for each function controllable by key press
@@ -32,10 +57,10 @@ static int			fdf_keys_jumptable(int keycode, struct s_fdf *data)
 		[KEY_N] = rotate_y_pos,
 		[KEY_PERIOD] = rotate_z_neg,
 		[KEY_COMMA] = rotate_z_pos,
-		[KEY_H] = move_left,
-		[KEY_L] = move_right,
-		[KEY_K] = move_up,
-		[KEY_J] = move_down,
+		[KEY_H] = decrease_steps,
+		[KEY_L] = increase_steps,
+		[KEY_K] = increase_rotation_speed,
+		[KEY_J] = decrease_rotation_speed,
 		[KEY_PLUS] = zoom_in,
 		[KEY_MINUS] = zoom_out,
 		[KEY_R] = reset_cam,
@@ -45,7 +70,7 @@ static int			fdf_keys_jumptable(int keycode, struct s_fdf *data)
 		key_funcs[keycode](data);
 	if (keycode == KEY_LSHIFT)
 		data->rotating = !data->rotating;
-	draw_image(data);
+	draw_image_graph(data);
 	return (0);
 }
 
@@ -94,12 +119,12 @@ static int			fdf_keys_jumptable(int keycode, struct s_fdf *data)
 ** for keyboard functions, and starts the loop.
 */
 
-void				fdf(int **map, int width)
+void				fdf_graph(double (*f_z)(double x, double y), int width, int height)
 {
 	struct s_fdf	*data;
 
-	data = fdf_setup(map, width);
-	draw_image(data);
+	data = fdf_graph_setup(f_z, width, height);
+	draw_image_graph(data);
 	mlx_key_hook(data->win_ptr, fdf_keys_jumptable, data);
 	mlx_loop_hook(data->mlx_ptr, rotate, data);
 	mlx_loop(data->mlx_ptr);
