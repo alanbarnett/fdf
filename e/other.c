@@ -6,7 +6,7 @@
 /*   By: abarnett <alanbarnett328@gmail.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/06 23:03:49 by abarnett          #+#    #+#             */
-/*   Updated: 2020/03/08 05:18:51 by abarnett         ###   ########.fr       */
+/*   Updated: 2020/03/08 20:08:41 by abarnett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,4 +145,70 @@ static void	fdf_put_pixel(struct s_fdf *data, double x, double y, double z)
 	pixel[2] = ft_min(z * 2, 255);
 	pixel[1] = 0x20;
 	pixel[0] = 0xa0;
+}
+
+/*
+** This is a pixel plotter and reset_cam function for fdf_slow_rotate. The
+** struct is also initialized to have a scale of 40, rotation speed of 1, and
+** rotation enabled.
+*/
+static void	fdf_put_pixel(struct s_fdf *data, double x, double y, double z)
+{
+	char	*pixel;
+
+	double	new_x;
+	double	new_y;
+	double	new_z;
+
+	double	theta_x;
+	double	theta_y;
+	double	theta_z;
+
+	// Converting standard angles to radians
+	theta_x = (data->theta_x * M_PI) / 180;
+	theta_y = (data->theta_y * M_PI) / 180;
+	theta_z = (data->theta_z * M_PI) / 180;
+	//
+
+	new_x = x;
+	new_y = y;
+	new_z = z;
+
+	// Rotations
+	// X coordinate
+	new_x *= cos(theta_y);
+	new_x *= cos(theta_z);
+	new_x += y * sin(theta_z);
+	// Y coordinate
+	new_y *= cos(theta_x);
+	new_y *= cos(theta_z);
+	new_y -= x * sin(theta_z);
+	//
+
+	// Projection
+	new_x = new_x + (new_z * sin(theta_y));
+	new_y = new_y + (new_z * sin(theta_x));
+	//
+
+	new_x += data->cam_x;
+	new_y += data->cam_y;
+
+	if (new_x < 0 || new_x >= WIDTH || new_y < 0 || new_y >= HEIGHT)
+		return ;
+
+	pixel = &(data->img_data[ (data->img_size_line * (int)new_y) + ((data->img_bits_per_pixel / 8) * (int)new_x) ]);
+	pixel[3] = 0;
+	pixel[2] = ft_min(z * 2, 255);
+	pixel[1] = 0x20;
+	pixel[0] = 0xa0;
+}
+void	reset_cam(struct s_fdf *data)
+{
+	data->scale = 40;
+	data->cam_x = WIDTH / 2;
+	data->cam_y = HEIGHT / 2;
+	data->theta_x = 0;
+	data->theta_y = 0;
+	data->theta_z = 0;
+	data->rotation_speed = 1;
 }
