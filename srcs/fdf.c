@@ -11,6 +11,8 @@
 /* ************************************************************************** */
 
 #include "fdf.h"
+#include "config.h"
+#include "draw.h"
 #include "fdf_keys.h"
 #include "fdf_draw.h"
 #include "mlx.h"
