@@ -6,7 +6,7 @@
 /*   By: abarnett <alanbarnett328@gmail.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 00:25:11 by abarnett          #+#    #+#             */
-/*   Updated: 2020/03/08 19:45:15 by abarnett         ###   ########.fr       */
+/*   Updated: 2020/03/10 19:56:01 by abarnett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,10 +58,12 @@ static struct s_fdf	*fdf_setup(int **map, int width)
 	data->map = map;
 	data->map_width = width;
 	data->map_height = get_map_height(map);
-	data->scale = 20;
+	data->scale = 40;
 	data->rotation_speed = 10;
-	data->cam_x = WIDTH / 2;
-	data->cam_y = HEIGHT / 2;
+	data->origin_x = WIDTH / 2;
+	data->origin_y = HEIGHT / 2;
+	data->cam_x = 0;
+	data->cam_y = 0;
 	data->theta_x = 0;
 	data->theta_y = 0;
 	data->theta_z = 0;

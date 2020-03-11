@@ -6,7 +6,7 @@
 /*   By: abarnett <alanbarnett328@gmail.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/02 20:07:28 by abarnett          #+#    #+#             */
-/*   Updated: 2020/03/07 00:58:00 by abarnett         ###   ########.fr       */
+/*   Updated: 2020/03/10 19:55:51 by abarnett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,8 @@ struct s_fdf
 	int		img_size_line;
 	int		scale;
 	int		rotation_speed;
+	int		origin_x;
+	int		origin_y;
 	int		cam_x;
 	int		cam_y;
 	int		theta_x;
