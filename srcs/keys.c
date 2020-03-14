@@ -6,11 +6,12 @@
 /*   By: abarnett <alanbarnett328@gmail.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 01:01:00 by abarnett          #+#    #+#             */
-/*   Updated: 2020/03/10 18:40:52 by abarnett         ###   ########.fr       */
+/*   Updated: 2020/03/14 01:59:43 by alan             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
+#include "config.h"
 #include <stdlib.h> // exit
 
 void	quit(struct s_fdf *data)
@@ -83,11 +84,11 @@ void	zoom_out(struct s_fdf *data)
 
 void	reset_cam(struct s_fdf *data)
 {
-	data->scale = 40;
+	data->scale = SCALE;
 	data->cam_x = WIDTH / 2;
 	data->cam_y = HEIGHT / 2;
 	data->theta_x = 0;
 	data->theta_y = 0;
 	data->theta_z = 0;
-	data->rotation_speed = 10;
+	data->rotation_speed = ROTATION_DEGREES;
 }

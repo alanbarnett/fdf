@@ -6,9 +6,15 @@
 /*   By: abarnett <alanbarnett328@gmail.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 01:43:43 by abarnett          #+#    #+#             */
-/*   Updated: 2020/03/10 20:04:21 by abarnett         ###   ########.fr       */
+/*   Updated: 2020/03/14 02:02:09 by alan             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#include "fdf.h"
+#include "config.h"
+#include "fdf_draw.h"
+#include "ft_mem.h"
+#include "mlx.h"
 
 /*
 ** Draws a line from the map into the image, using parameters as coordinates

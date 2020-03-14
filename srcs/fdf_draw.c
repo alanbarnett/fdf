@@ -6,11 +6,12 @@
 /*   By: abarnett <alanbarnett328@gmail.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/10 19:58:27 by abarnett          #+#    #+#             */
-/*   Updated: 2020/03/10 20:02:00 by abarnett         ###   ########.fr       */
+/*   Updated: 2020/03/14 02:02:54 by alan             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
+#include "config.h"
 #include "fdf_draw.h"
 #include "ft_mem.h"
 #include "ft_math.h"
@@ -50,7 +51,7 @@ void	fdf_plot_pixel(struct s_fdf *data, struct s_point point)
 	new_point.y *= cos(theta.z);
 	new_point.y -= point.x * sin(theta.z);
 	// Z coordinate
-	
+
 	//
 
 	// Projection
