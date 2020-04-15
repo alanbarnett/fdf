@@ -6,7 +6,7 @@
 /*   By: abarnett <alanbarnett328@gmail.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/06 23:03:49 by abarnett          #+#    #+#             */
-/*   Updated: 2020/03/08 20:08:41 by abarnett         ###   ########.fr       */
+/*   Updated: 2020/03/17 07:36:12 by alan             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -211,4 +211,69 @@ void	reset_cam(struct s_fdf *data)
 	data->theta_y = 0;
 	data->theta_z = 0;
 	data->rotation_speed = 1;
+}
+
+
+/*
+** This projection makes a really neat flip when used with the previous
+** projection as well.
+*/
+/*
+** Function to place an (x,y,z) point on a projected 2D plane
+**
+** Applies transformations based on the position of the camera, and the
+** rotation of the coordinate plane
+*/
+
+void	fdf_plot_pixel(struct s_fdf *data, struct s_point *point)
+{
+	char			*pixel;
+	struct s_point	new_point;
+	struct s_point	theta;
+	//int				x;
+	//int				y;
+
+	// Initialize new point
+	new_point.x = point->x;
+	new_point.y = point->y;
+	new_point.z = point->z;
+	//
+
+	// Converting standard angles to radians
+	theta.x = (data->theta_x * M_PI) / 180;
+	theta.y = (data->theta_y * M_PI) / 180;
+	theta.z = (data->theta_z * M_PI) / 180;
+	//
+
+	// Rotations
+	// X coordinate
+	new_point.x *= cos(theta.y);
+	new_point.x *= cos(theta.z);
+	// Y coordinate
+	new_point.y *= cos(theta.x);
+	new_point.y *= cos(theta.z);
+	// Z coordinate
+	new_point.z *= cos(theta.x);
+	new_point.z *= cos(theta.y);
+	//
+
+	// Projection
+	new_point.x = new_point.x + (new_point.z * sin(theta.y));
+	new_point.y = new_point.y + (new_point.z * sin(theta.x));
+	//
+
+	new_point.x += data->cam_x;
+	new_point.y += data->cam_y;
+	//new_point.z += data->cam_z;
+
+	// Translate new point to mlx x and y
+
+	if (new_point.x < 0 || new_point.x >= WIDTH || new_point.y < 0 || new_point.y >= HEIGHT)
+		return ;
+
+	pixel = &(data->img_data[ (data->img_size_line * (int)new_point.y) + ((data->img_bits_per_pixel / 8) * (int)new_point.x) ]);
+	pixel[3] = 0;
+	pixel[2] = fmin(point->z * 2, 255);
+	pixel[1] = 0x20;
+	pixel[0] = 0xa0;
 }
