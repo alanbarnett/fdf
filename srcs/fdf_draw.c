@@ -79,7 +79,8 @@ void	fdf_plot_pixel(struct s_fdf *data, struct s_point *point)
 ** variable and plots pixels along the path.
 */
 
-void	fdf_plot_line(struct s_fdf *data, struct s_point start, struct s_point end)
+void	fdf_plot_line(struct s_fdf *data, struct s_point *start,
+						struct s_point *end)
 {
 	struct s_point	point;
 	double			d_x;
@@ -87,17 +88,17 @@ void	fdf_plot_line(struct s_fdf *data, struct s_point start, struct s_point end)
 	double			d_z;
 	int				steps;
 
-	point.x = ft_abs(start.x - end.x);
-	point.y = ft_abs(start.y - end.y);
-	point.z = ft_abs(start.z - end.z);
+	point.x = fabs(start->x - end->x);
+	point.y = fabs(start->y - end->y);
+	point.z = fabs(start->z - end->z);
 	steps = hypot(point.x, point.y);
 	steps = hypot(steps, point.z);
-	d_x = ((double)(end.x - start.x) / steps);
-	d_y = ((double)(end.y - start.y) / steps);
-	d_z = ((double)(end.z - start.z) / steps);
-	point.x = start.x;
-	point.y = start.y;
-	point.z = start.z;
+	d_x = ((end->x - start->x) / steps);
+	d_y = ((end->y - start->y) / steps);
+	d_z = ((end->z - start->z) / steps);
+	point.x = start->x;
+	point.y = start->y;
+	point.z = start->z;
 	while (steps)
 	{
 		fdf_plot_pixel(data, &point);
