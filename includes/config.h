@@ -6,7 +6,7 @@
 /*   By: alan <alanbarnett328@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/10 16:07:28 by alan              #+#    #+#             */
-/*   Updated: 2020/04/15 03:56:40 by alan             ###   ########.fr       */
+/*   Updated: 2020/04/15 04:29:52 by alan             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,9 @@
 # define SCALE (30)
 
 /*
-** Vanishing point multiplier. Gets added to the x and y as a multiple of the z
-** distance. Z values behind the vanishing point won't appear.
+** Multiplier for how much z affects the projected point's x and y value
+** i.e. the value (1000) says that with a z of 1000, the projected x and y
+** value should double
 */
 # define VANISHING_POINT (1000)
 
