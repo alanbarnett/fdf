@@ -6,7 +6,7 @@
 /*   By: abarnett <alanbarnett328@gmail.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 00:25:11 by abarnett          #+#    #+#             */
-/*   Updated: 2020/03/14 02:00:13 by alan             ###   ########.fr       */
+/*   Updated: 2020/04/15 04:36:43 by alan             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,10 +84,10 @@ static int			fdf_keys_jumptable(int keycode, struct s_fdf *data)
 {
 	static void	(*key_funcs[128])() = {
 		[KEY_Q] = quit,
-		[KEY_DARR] = rotate_x_neg,
-		[KEY_UARR] = rotate_x_pos,
-		[KEY_LARR] = rotate_y_neg,
-		[KEY_RARR] = rotate_y_pos,
+		[KEY_U] = rotate_x_neg,
+		[KEY_E] = rotate_x_pos,
+		[KEY_I] = rotate_y_neg,
+		[KEY_N] = rotate_y_pos,
 		[KEY_PERIOD] = rotate_z_neg,
 		[KEY_COMMA] = rotate_z_pos,
 		[KEY_H] = move_left,

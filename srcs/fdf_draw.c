@@ -6,15 +6,13 @@
 /*   By: abarnett <alanbarnett328@gmail.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/10 19:58:27 by abarnett          #+#    #+#             */
-/*   Updated: 2020/04/16 02:56:44 by alan             ###   ########.fr       */
+/*   Updated: 2020/04/15 03:48:58 by alan             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 #include "config.h"
 #include "fdf_draw.h"
-#include "ft_mem.h"
-#include "ft_math.h"
 #include "mlx.h"
 #include <math.h>
 
@@ -80,8 +78,9 @@ void		fdf_plot_point(struct s_fdf *data, struct s_point *point)
 	new_p.y += new_p.y * (new_p.z / VANISHING_POINT);
 
 	// Origin adjustment
+	// y needs to be inverted, since mlx y points down
 	new_p.x += data->origin_x;
-	new_p.y += data->origin_y;
+	new_p.y = (-1 * new_p.y) + data->origin_y;
 
 	if (new_p.x < 0 || new_p.x >= WIDTH || new_p.y < 0 || new_p.y >= HEIGHT)
 		return ;
@@ -91,7 +90,7 @@ void		fdf_plot_point(struct s_fdf *data, struct s_point *point)
 	pixel = &(data->img_data[ (data->img_size_line * (int)new_p.y) + \
 			((data->img_bits_per_pixel / 8) * (int)new_p.x) ]);
 	pixel[3] = 0;
-	pixel[2] = ft_min(0x20 + point->z * 2, 255);
+	pixel[2] = fmin(0x20 + point->z * 2, 255);
 	pixel[1] = 0x60 + ((double)0x20 * (new_p.z / VANISHING_POINT));
 	pixel[0] = 0x60 + ((double)0xa0 * (new_p.z / VANISHING_POINT));
 }
