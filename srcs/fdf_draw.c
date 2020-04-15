@@ -6,7 +6,7 @@
 /*   By: abarnett <alanbarnett328@gmail.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/10 19:58:27 by abarnett          #+#    #+#             */
-/*   Updated: 2020/04/15 03:48:58 by alan             ###   ########.fr       */
+/*   Updated: 2020/04/15 04:40:07 by alan             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ static void	rotate_point(struct s_point *point, double x, double y, double z)
 	point->z *= cos(y);
 	point->z += tmp * sin(y);
 	// Z direction
+	tmp = point->x;
 	point->x *= cos(z);
 	point->x -= point->y * sin(z);
 	point->y *= cos(z);
