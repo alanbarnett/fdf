@@ -62,8 +62,8 @@ static struct s_fdf	*fdf_setup(int **map, int width)
 	data->rotation_speed = ROTATION_DEGREES;
 	data->origin_x = WIDTH / 2;
 	data->origin_y = HEIGHT / 2;
-	data->cam_x = WIDTH / 2;
-	data->cam_y = HEIGHT / 2;
+	data->cam_x = 0;
+	data->cam_y = 0;
 	data->theta_x = 0;
 	data->theta_y = 0;
 	data->theta_z = 0;

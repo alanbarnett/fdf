@@ -6,7 +6,7 @@
 /*   By: abarnett <alanbarnett328@gmail.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 01:01:00 by abarnett          #+#    #+#             */
-/*   Updated: 2020/03/14 01:59:43 by alan             ###   ########.fr       */
+/*   Updated: 2020/04/15 04:01:51 by alan             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,10 +85,10 @@ void	zoom_out(struct s_fdf *data)
 void	reset_cam(struct s_fdf *data)
 {
 	data->scale = SCALE;
-	data->cam_x = WIDTH / 2;
-	data->cam_y = HEIGHT / 2;
+	data->rotation_speed = ROTATION_DEGREES;
+	data->cam_x = 0;
+	data->cam_y = 0;
 	data->theta_x = 0;
 	data->theta_y = 0;
 	data->theta_z = 0;
-	data->rotation_speed = ROTATION_DEGREES;
 }
