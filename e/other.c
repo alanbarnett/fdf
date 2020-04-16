@@ -6,7 +6,7 @@
 /*   By: abarnett <alanbarnett328@gmail.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/06 23:03:49 by abarnett          #+#    #+#             */
-/*   Updated: 2020/03/17 07:36:12 by alan             ###   ########.fr       */
+/*   Updated: 2020/04/16 02:55:31 by alan             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -213,7 +213,6 @@ void	reset_cam(struct s_fdf *data)
 	data->rotation_speed = 1;
 }
 
-
 /*
 ** This projection makes a really neat flip when used with the previous
 ** projection as well.
@@ -276,4 +275,184 @@ void	fdf_plot_pixel(struct s_fdf *data, struct s_point *point)
 	pixel[2] = fmin(point->z * 2, 255);
 	pixel[1] = 0x20;
 	pixel[0] = 0xa0;
+}
+
+/*
+** Finally cracked some good rotation functions, here's a pixel plotter that
+** does wacky stuff with the projection based on the z coordinate.
+*/
+void	fdf_plot_pixel(struct s_fdf *data, struct s_point *point)
+{
+	char			*pixel;
+	struct s_point	new_point;
+	struct s_point	theta;
+
+	// Converting standard angles to radians
+	theta.x = (data->theta_x * M_PI) / 180;
+	theta.y = (data->theta_y * M_PI) / 180;
+	theta.z = (data->theta_z * M_PI) / 180;
+	//
+
+	new_point.x = point->x;
+	new_point.y = point->y;
+	new_point.z = point->z;
+
+	/*
+	** // Generate scalars
+	** double	x_scale = 1;
+	** double	y_scale = 1;
+	** double	z_scale = 1;
+	** // X direction
+	** tmp = new_point.y;
+	** new_point.y *= cos(theta.x);
+	** new_point.y -= new_point.z * sin(theta.x);
+	** new_point.z *= cos(theta.x);
+	** new_point.z += tmp * sin(theta.x);
+	** // Y direction
+	** tmp = new_point.x;
+	** new_point.x *= cos(theta.y);
+	** new_point.x -= new_point.z * sin(theta.y);
+	** new_point.z *= cos(theta.y);
+	** new_point.z += tmp * sin(theta.y);
+	** // Z direction
+	** new_point.x *= cos(theta.z);
+	** new_point.x -= new_point.y * sin(theta.z);
+	** new_point.y *= cos(theta.z);
+	** new_point.y += tmp * sin(theta.z);
+	** //
+	*/
+
+	double	tmp;
+	// Rotations
+	// X direction
+	tmp = new_point.y;
+	new_point.y *= cos(theta.x);
+	new_point.y -= new_point.z * sin(theta.x);
+	new_point.z *= cos(theta.x);
+	new_point.z += tmp * sin(theta.x);
+	// Y direction
+	tmp = new_point.x;
+	new_point.x *= cos(theta.y);
+	new_point.x -= new_point.z * sin(theta.y);
+	new_point.z *= cos(theta.y);
+	new_point.z += tmp * sin(theta.y);
+	// Z direction
+	new_point.x *= cos(theta.z);
+	new_point.x -= new_point.y * sin(theta.z);
+	new_point.y *= cos(theta.z);
+	new_point.y += tmp * sin(theta.z);
+	//
+
+	/*
+	** // Rotations
+	** // X coordinate
+	** new_point.x *= cos(theta.y);
+	** new_point.x *= cos(theta.z);
+	** new_point.x += point->y * sin(theta.z);
+	** // Y coordinate
+	** new_point.y *= cos(theta.x);
+	** new_point.y *= cos(theta.z);
+	** new_point.y -= point->x * sin(theta.z);
+	** // Z coordinate
+	** //
+	*/
+
+	// Projection
+//	new_point.x += new_point.x * (new_point.z / VANISHING_POINT);
+//	new_point.y += new_point.y * (new_point.z / VANISHING_POINT);
+	//
+
+	// Projection
+	new_point.x *= (new_point.z / VANISHING_POINT);
+	new_point.y *= (new_point.z / VANISHING_POINT);
+	//
+
+	/*
+	** // Projection
+	** new_point.x = new_point.x + (new_point.z * sin(theta.y));
+	** new_point.y = new_point.y + (new_point.z * sin(theta.x));
+	** //
+	*/
+
+	new_point.x += data->cam_x;
+	new_point.y += data->cam_y;
+
+	if (new_point.x < 0 || new_point.x >= WIDTH || new_point.y < 0 || new_point.y >= HEIGHT)
+		return ;
+//	if (new_point.z < (VANISHING_POINT * -1))
+//		return ;
+
+	pixel = &(data->img_data[ (data->img_size_line * (int)new_point.y) + ((data->img_bits_per_pixel / 8) * (int)new_point.x) ]);
+	pixel[3] = 0;
+	pixel[2] = ft_min(0x20 + point->z * 2, 255);
+	pixel[1] = 0x80 - ((double)0x20 * (new_point.z / VANISHING_POINT));
+	pixel[0] = 0x80 - ((double)0xa0 * (new_point.z / VANISHING_POINT));
+}
+
+/*
+** ????????
+** Oh, it's changing the pointer so it makes a portal to hell as it tries to
+** draw a line
+*/
+void	fdf_plot_pixel(struct s_fdf *data, struct s_point *point)
+{
+	char			*pixel;
+	struct s_point	theta;
+	double			height;
+	double			tmp;
+
+	// Converting standard angles to radians
+	theta.x = (data->theta_x * M_PI) / 180;
+	theta.y = (data->theta_y * M_PI) / 180;
+	theta.z = (data->theta_z * M_PI) / 180;
+	//
+
+	// Save height for elevation gradient
+	height = point->z;
+
+	// Rotations
+	// X direction
+	tmp = point->y;
+	point->y *= cos(theta.x);
+	point->y -= point->z * sin(theta.x);
+	point->z *= cos(theta.x);
+	point->z += tmp * sin(theta.x);
+	// Y direction
+	tmp = point->x;
+	point->x *= cos(theta.y);
+	point->x -= point->z * sin(theta.y);
+	point->z *= cos(theta.y);
+	point->z += tmp * sin(theta.y);
+	// Z direction
+	point->x *= cos(theta.z);
+	point->x -= point->y * sin(theta.z);
+	point->y *= cos(theta.z);
+	point->y += tmp * sin(theta.z);
+	//
+
+	// Camera adjustment
+	point->x += data->cam_x;
+	point->y += data->cam_y;
+	//
+
+	// Projection
+	point->x += point->x * (point->z / VANISHING_POINT);
+	point->y += point->y * (point->z / VANISHING_POINT);
+	//
+
+	// Origin adjustment
+	point->x += data->origin_x;
+	point->y += data->origin_y;
+	//
+
+	if (point->x < 0 || point->x >= WIDTH || point->y < 0 || point->y >= HEIGHT)
+		return ;
+	if (point->z < (VANISHING_POINT * -1))
+		return ;
+
+	pixel = &(data->img_data[ (data->img_size_line * (int)point->y) + ((data->img_bits_per_pixel / 8) * (int)point->x) ]);
+	pixel[3] = 0;
+	pixel[2] = ft_min(0x20 + height * 2, 255);
+	pixel[1] = 0x60 + ((double)0x20 * (point->z / VANISHING_POINT));
+	pixel[0] = 0x60 + ((double)0xa0 * (point->z / VANISHING_POINT));
 }
