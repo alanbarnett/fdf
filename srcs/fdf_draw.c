@@ -6,7 +6,7 @@
 /*   By: abarnett <alanbarnett328@gmail.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/10 19:58:27 by abarnett          #+#    #+#             */
-/*   Updated: 2020/03/14 02:11:59 by alan             ###   ########.fr       */
+/*   Updated: 2020/04/16 02:56:44 by alan             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,9 +55,8 @@ void	fdf_plot_pixel(struct s_fdf *data, struct s_point *point)
 	//
 
 	// Projection
-	new_point.x = new_point.x + (new_point.z * sin(theta.y));
-	new_point.y = new_point.y + (new_point.z * sin(theta.x));
-	//
+	new_p.x += new_p.x * (new_p.z / VANISHING_POINT);
+	new_p.y += new_p.y * (new_p.z / VANISHING_POINT);
 
 	new_point.x += data->cam_x;
 	new_point.y += data->cam_y;

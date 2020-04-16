@@ -6,7 +6,7 @@
 /*   By: alan <alanbarnett328@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/10 16:07:28 by alan              #+#    #+#             */
-/*   Updated: 2020/03/14 01:34:21 by alan             ###   ########.fr       */
+/*   Updated: 2020/04/15 03:56:40 by alan             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,5 +39,11 @@
 ** Default scale (distance between points in the file)
 */
 # define SCALE (30)
+
+/*
+** Vanishing point multiplier. Gets added to the x and y as a multiple of the z
+** distance. Z values behind the vanishing point won't appear.
+*/
+# define VANISHING_POINT (1000)
 
 #endif
