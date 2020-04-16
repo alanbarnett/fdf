@@ -6,7 +6,7 @@
 /*   By: abarnett <alanbarnett328@gmail.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 05:41:39 by abarnett          #+#    #+#             */
-/*   Updated: 2020/03/16 19:01:11 by alan             ###   ########.fr       */
+/*   Updated: 2020/04/16 03:08:34 by alan             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ struct s_point
 	double	z;
 };
 
-void	fdf_plot_pixel(struct s_fdf *data, struct s_point *point);
+void	fdf_plot_point(struct s_fdf *data, struct s_point *point);
 void	fdf_plot_line(struct s_fdf *data, struct s_point *start,
 						struct s_point *end);
 

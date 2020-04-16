@@ -19,56 +19,81 @@
 #include <math.h>
 
 /*
-** Function to place an (x,y,z) point on a projected 2D plane
+** Rotates a point in the point struct by angles (in radians)
 **
-** Applies transformations based on the position of the camera, and the
-** rotation of the coordinate plane
+** This could be optimized by precalculating the sin and cos values for x y z
 */
 
-void	fdf_plot_pixel(struct s_fdf *data, struct s_point *point)
+static void	rotate_point(struct s_point *point, double x, double y, double z)
 {
-	char			*pixel;
-	struct s_point	new_point;
-	struct s_point	theta;
+	double	tmp;
 
 	// Converting standard angles to radians
-	theta.x = (data->theta_x * M_PI) / 180;
-	theta.y = (data->theta_y * M_PI) / 180;
-	theta.z = (data->theta_z * M_PI) / 180;
-	//
+	x = (x * M_PI) / 180;
+	y = (y * M_PI) / 180;
+	z = (z * M_PI) / 180;
+	// X direction
+	tmp = point->y;
+	point->y *= cos(x);
+	point->y -= point->z * sin(x);
+	point->z *= cos(x);
+	point->z += tmp * sin(x);
+	// Y direction
+	tmp = point->x;
+	point->x *= cos(y);
+	point->x -= point->z * sin(y);
+	point->z *= cos(y);
+	point->z += tmp * sin(y);
+	// Z direction
+	point->x *= cos(z);
+	point->x -= point->y * sin(z);
+	point->y *= cos(z);
+	point->y += tmp * sin(z);
+}
 
-	new_point.x = point->x;
-	new_point.y = point->y;
-	new_point.z = point->z;
+/*
+** Function to place an (x,y,z) point on a projected 2D plane
+**
+** Rotates the point with angles stored in the data struct
+** Moves a camera to view the object
+*/
 
-	// Rotations
-	// X coordinate
-	new_point.x *= cos(theta.y);
-	new_point.x *= cos(theta.z);
-	new_point.x += point->y * sin(theta.z);
-	// Y coordinate
-	new_point.y *= cos(theta.x);
-	new_point.y *= cos(theta.z);
-	new_point.y -= point->x * sin(theta.z);
-	// Z coordinate
+void		fdf_plot_point(struct s_fdf *data, struct s_point *point)
+{
+	char			*pixel;
+	struct s_point	new_p;
 
-	//
+	// Initialize new point
+	new_p.x = point->x;
+	new_p.y = point->y;
+	new_p.z = point->z;
+
+	// Rotate
+	rotate_point(&new_p, data->theta_x, data->theta_y, data->theta_z);
+
+	// Camera adjustment
+	new_p.x += data->cam_x;
+	new_p.y += data->cam_y;
 
 	// Projection
 	new_p.x += new_p.x * (new_p.z / VANISHING_POINT);
 	new_p.y += new_p.y * (new_p.z / VANISHING_POINT);
 
-	new_point.x += data->cam_x;
-	new_point.y += data->cam_y;
+	// Origin adjustment
+	new_p.x += data->origin_x;
+	new_p.y += data->origin_y;
 
-	if (new_point.x < 0 || new_point.x >= WIDTH || new_point.y < 0 || new_point.y >= HEIGHT)
+	if (new_p.x < 0 || new_p.x >= WIDTH || new_p.y < 0 || new_p.y >= HEIGHT)
+		return ;
+	if (new_p.z < (VANISHING_POINT * -1))
 		return ;
 
-	pixel = &(data->img_data[ (data->img_size_line * (int)new_point.y) + ((data->img_bits_per_pixel / 8) * (int)new_point.x) ]);
+	pixel = &(data->img_data[ (data->img_size_line * (int)new_p.y) + \
+			((data->img_bits_per_pixel / 8) * (int)new_p.x) ]);
 	pixel[3] = 0;
-	pixel[2] = ft_min(point->z * 2, 255);
-	pixel[1] = 0x20;
-	pixel[0] = 0xa0;
+	pixel[2] = ft_min(0x20 + point->z * 2, 255);
+	pixel[1] = 0x60 + ((double)0x20 * (new_p.z / VANISHING_POINT));
+	pixel[0] = 0x60 + ((double)0xa0 * (new_p.z / VANISHING_POINT));
 }
 
 /*
@@ -100,7 +125,7 @@ void	fdf_plot_line(struct s_fdf *data, struct s_point *start,
 	point.z = start->z;
 	while (steps)
 	{
-		fdf_plot_pixel(data, &point);
+		fdf_plot_point(data, &point);
 		point.x += d_x;
 		point.y += d_y;
 		point.z += d_z;
