@@ -40,9 +40,13 @@ static int			get_map_height(int **map)
 ** Creates the mlx connection, window, and image I will be using. Gets the data
 ** about the image as well, so it is ready to use.
 **
-** Scale is an integer that determines my zoom level at this stage. It will be
-** multiplied to the x and y offsets of the double array. It is the distance
-** between each node of the wireframe.
+** It takes the width of the map, which should be already known since rows
+** aren't null terminated. It can calculate the height from the map, since the
+** whole thing is null terminated.
+**
+** Scale is an integer that determines my zoom level. It will be multiplied to
+** the x and y offsets of the double array. It is the distance between each
+** node of the wireframe.
 */
 
 static struct s_fdf	*fdf_setup(int **map, int width)
@@ -54,7 +58,8 @@ static struct s_fdf	*fdf_setup(int **map, int width)
 	data->mlx_ptr = mlx_init();
 	data->win_ptr = mlx_new_window(data->mlx_ptr, WIDTH, HEIGHT, "fdf - abarnett");
 	data->img_ptr = mlx_new_image(data->mlx_ptr, WIDTH, HEIGHT);
-	data->img_data = mlx_get_data_addr(data->img_ptr, &(data->img_bits_per_pixel), &(data->img_size_line), &endian);
+	data->img_data = mlx_get_data_addr(data->img_ptr, \
+			&(data->img_bits_per_pixel), &(data->img_size_line), &endian);
 	data->map = map;
 	data->map_width = width;
 	data->map_height = get_map_height(map);
@@ -74,6 +79,7 @@ static struct s_fdf	*fdf_setup(int **map, int width)
 /*
 ** Jump table for each function controllable by key press
 */
+
 static int			fdf_keys_jumptable(int keycode, struct s_fdf *data)
 {
 	static void	(*key_funcs[128])() = {
@@ -105,6 +111,7 @@ static int			fdf_keys_jumptable(int keycode, struct s_fdf *data)
 /*
 ** Carousel function while not doing anything. Toggled by pressing LSHIFT.
 */
+
 int					rotate(struct s_fdf *data)
 {
 	if (data->rotating == 0)
