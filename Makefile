@@ -6,7 +6,7 @@
 #    By: alan <alanbarnett328@gmail.com>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/12/08 17:06:44 by alan              #+#    #+#              #
-#    Updated: 2020/03/01 06:41:14 by abarnett         ###   ########.fr        #
+#    Updated: 2020/04/29 11:42:02 by abarnett         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -44,7 +44,7 @@ $(NAME): $(LIBMLX) $(LIBFT) $(C_OBJS)
 -include $(C_DEPS)
 
 clean:
-	@- $(RM) $(C_OBJS) $(C_DEPS)
+	@- $(RM) $(C_OBJS) $(C_DEPS) tags
 
 lclean:
 	@- $(MAKE_LIBMLX) clean
