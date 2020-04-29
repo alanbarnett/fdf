@@ -6,13 +6,16 @@
 /*   By: abarnett <alanbarnett328@gmail.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 01:01:00 by abarnett          #+#    #+#             */
-/*   Updated: 2020/04/15 04:01:51 by alan             ###   ########.fr       */
+/*   Updated: 2020/04/28 10:43:31 by alan             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "fdf.h"
+#include "fdf_setup.h"
 #include "config.h"
+#include "draw.h"
+
 #include <stdlib.h> // exit
+#include <unistd.h> // usleep
 
 void	quit(struct s_fdf *data)
 {
@@ -82,9 +85,28 @@ void	zoom_out(struct s_fdf *data)
 		data->scale -= 5;
 }
 
+/*
+** Carousel function while not doing anything. Toggled by pressing LSHIFT.
+*/
+
+int		rotate(struct s_fdf *data)
+{
+	if (data->rotating == 0)
+		return (0);
+	rotate_x_pos(data);
+	rotate_z_pos(data);
+	draw_image(data);
+	usleep(ROTATION_SPEED_MS);
+	return (0);
+}
+
 void	reset_cam(struct s_fdf *data)
 {
-	data->scale = SCALE;
+	int	max_width;
+
+	max_width = (data->map_width > data->map_height ? \
+			data->map_width : data->map_height);
+	data->scale = (WIDTH * 0.80) / max_width;
 	data->rotation_speed = ROTATION_DEGREES;
 	data->cam_x = 0;
 	data->cam_y = 0;

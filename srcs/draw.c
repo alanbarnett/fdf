@@ -6,11 +6,11 @@
 /*   By: abarnett <alanbarnett328@gmail.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 01:43:43 by abarnett          #+#    #+#             */
-/*   Updated: 2020/03/18 04:12:02 by alan             ###   ########.fr       */
+/*   Updated: 2020/04/28 10:11:13 by alan             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "fdf.h"
+#include "fdf_setup.h"
 #include "config.h"
 #include "fdf_draw.h"
 #include "ft_mem.h"
@@ -49,23 +49,28 @@ static void	plot_map_line(struct s_fdf *data, int x1, int x2, int y1, int y2)
 ** Draw map coordinates into the image
 */
 
-void		plot_map(struct s_fdf *data)
+static void	plot_map(struct s_fdf *data)
 {
-	for (int i = 0; i < data->map_height; ++i)
+	int	i;
+	int	j;
+
+	i = 0;
+	while (i < data->map_height)
 	{
-		for (int j = 0; j < data->map_width; ++j)
+		j = 0;
+		while (j < data->map_width)
 		{
-			// draw line forward
 			if (j + 1 < data->map_width)
 			{
 				plot_map_line(data, j, j + 1, i, i);
 			}
-			// draw line down
 			if (i + 1 < data->map_height)
 			{
 				plot_map_line(data, j, j, i, i + 1);
 			}
+			++j;
 		}
+		++i;
 	}
 }
 

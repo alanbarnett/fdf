@@ -6,11 +6,11 @@
 /*   By: abarnett <alanbarnett328@gmail.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/10 19:58:27 by abarnett          #+#    #+#             */
-/*   Updated: 2020/04/15 04:40:07 by alan             ###   ########.fr       */
+/*   Updated: 2020/04/28 10:44:40 by alan             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "fdf.h"
+#include "fdf_setup.h"
 #include "config.h"
 #include "fdf_draw.h"
 #include "mlx.h"

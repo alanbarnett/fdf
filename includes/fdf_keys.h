@@ -6,7 +6,7 @@
 /*   By: abarnett <alanbarnett328@gmail.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 01:10:30 by abarnett          #+#    #+#             */
-/*   Updated: 2020/03/08 19:45:34 by abarnett         ###   ########.fr       */
+/*   Updated: 2020/04/28 10:01:21 by alan             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ void	move_up(struct s_fdf *data);
 void	move_down(struct s_fdf *data);
 void	zoom_in(struct s_fdf *data);
 void	zoom_out(struct s_fdf *data);
+int		rotate(struct s_fdf *data);
 void	reset_cam(struct s_fdf *data);
 
 #endif
