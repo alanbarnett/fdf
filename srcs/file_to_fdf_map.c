@@ -6,11 +6,12 @@
 /*   By: abarnett <alanbarnett328@gmail.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/02 19:57:01 by abarnett          #+#    #+#             */
-/*   Updated: 2020/04/15 06:37:31 by alan             ###   ########.fr       */
+/*   Updated: 2020/04/16 00:03:04 by alan             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_mem.h"
+#include "ft_string.h"
 #include "ft_parse.h"
 #include "get_next_line.h"
 #include <fcntl.h>
@@ -67,11 +68,14 @@ static void	fill_grid(int fd, int ***grid, int *size)
 	nums = -1;
 	capacity = 128;
 	i = 0;
+	line = 0;
 	*grid = (int **)ft_memalloc(sizeof(int *) * (capacity + 1));
 	while (get_next_line(fd, &line))
 	{
 		// make line into array, setting count to its size
 		arr = ft_intsplit(line, size);
+		// free line
+		ft_strdel(&line);
 		// resize if grid is at max size
 		if (i >= capacity)
 			*grid = resize_grid(*grid, &capacity);
@@ -90,6 +94,7 @@ static void	fill_grid(int fd, int ***grid, int *size)
 			break ;
 		}
 	}
+	ft_strdel(&line);
 }
 
 /*
