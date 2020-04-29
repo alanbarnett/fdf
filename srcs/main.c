@@ -33,7 +33,7 @@ int			main(int argc, char **argv)
 	{
 		map = file_to_fdf_map(argv[1], &size);
 		if (!map)
-			ft_printf("bad map!\n");
+			ft_printfd(STDERR_FILENO, "Error: Invalid map!\n");
 		else
 			fdf(map, size);
 	}

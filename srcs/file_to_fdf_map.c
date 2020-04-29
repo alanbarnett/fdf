@@ -6,7 +6,7 @@
 /*   By: abarnett <alanbarnett328@gmail.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/02 19:57:01 by abarnett          #+#    #+#             */
-/*   Updated: 2020/04/16 00:03:04 by alan             ###   ########.fr       */
+/*   Updated: 2020/04/29 13:53:10 by abarnett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,18 +43,19 @@ static int	**resize_grid(int **grid, int *capacity)
 	return (new_grid);
 }
 
-static int	delete_grid(int **grid, int size)
+static void	delete_grid(int ***grid, int size)
 {
 	int	i;
 
 	i = 0;
 	while (i < size)
 	{
-		ft_memdel((void **)&(grid[i]));
+		if ((*grid)[i])
+			ft_memdel((void **)&((*grid)[i]));
 		++i;
 	}
-	ft_memdel((void **)&grid);
-	return (0);
+	ft_memdel((void **)&(*grid));
+	grid = 0;
 }
 
 static void	fill_grid(int fd, int ***grid, int *size)
@@ -73,7 +74,8 @@ static void	fill_grid(int fd, int ***grid, int *size)
 	while (get_next_line(fd, &line))
 	{
 		// make line into array, setting count to its size
-		arr = ft_intsplit(line, size);
+		// return 0 if there are any extra characters
+		arr = ft_intsplit_strict(line, size);
 		// free line
 		ft_strdel(&line);
 		// resize if grid is at max size
@@ -82,16 +84,20 @@ static void	fill_grid(int fd, int ***grid, int *size)
 		// add in new array to grid
 		(*grid)[i++] = arr;
 		// set nums if unset still. this will be the valid line length
-		if (nums == -1)
-			nums = *size;
+		// else
 		// quit and delete grid if the count is not what it should be
 		// do this after adding the new array into the grid, so it gets deleted
 		// i is the amount of actually added things, delete that size
-		else if (nums != *size)
+		// or, if there's no arr, delete all of them except the last one. so
+		// make delete grid check if the array is set to 0
+		if (nums == -1)
 		{
-			delete_grid(*grid, i);
-			*grid = 0;
-			break ;
+			nums = *size;
+		}
+		else if (nums != *size || !arr)
+		{
+			delete_grid(grid, i);
+			return ;
 		}
 	}
 	ft_strdel(&line);
