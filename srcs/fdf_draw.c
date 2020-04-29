@@ -6,7 +6,7 @@
 /*   By: abarnett <alanbarnett328@gmail.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/10 19:58:27 by abarnett          #+#    #+#             */
-/*   Updated: 2020/04/28 10:44:40 by alan             ###   ########.fr       */
+/*   Updated: 2020/04/29 02:50:25 by alan             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,8 @@
 ** This could be optimized by precalculating the sin and cos values for x y z
 */
 
-static void	rotate_point(struct s_point *point, double x, double y, double z)
+static void		rotate_point(struct s_point *point, \
+						double x, double y, double z)
 {
 	double	tmp;
 
@@ -55,9 +56,11 @@ static void	rotate_point(struct s_point *point, double x, double y, double z)
 **
 ** Rotates the point with angles stored in the data struct
 ** Moves a camera to view the object
+** Projects the 3D point into a 2D graph, warping it by a perspective
+** Converts the new point to the MLX image and places it
 */
 
-void		fdf_plot_point(struct s_fdf *data, struct s_point *point)
+void			fdf_plot_point(struct s_fdf *data, struct s_point *point)
 {
 	char			*pixel;
 	struct s_point	new_p;
@@ -97,38 +100,49 @@ void		fdf_plot_point(struct s_fdf *data, struct s_point *point)
 }
 
 /*
+** Gets the length of the line between points start and end
+*/
+
+static double	get_line_length(struct s_point *start, struct s_point *end)
+{
+	double	length;
+
+	length = hypot(fabs(start->x - end->x), fabs(start->y - end->y));
+	length = hypot(length, fabs(start->z - end->z));
+	return (length);
+}
+
+/*
 ** Draws a line between start and end
 **
 ** Calculates the length of the 3d line, then walks coordinates with a delta
 ** variable and plots pixels along the path.
 */
 
-void	fdf_plot_line(struct s_fdf *data, struct s_point *start,
+void			fdf_plot_line(struct s_fdf *data, struct s_point *start,
 						struct s_point *end)
 {
-	struct s_point	point;
-	double			d_x;
-	double			d_y;
-	double			d_z;
-	int				steps;
+	struct s_point	point_a;
+	struct s_point	point_b;
+	struct s_point	delta;
+	double			length;
 
-	point.x = fabs(start->x - end->x);
-	point.y = fabs(start->y - end->y);
-	point.z = fabs(start->z - end->z);
-	steps = hypot(point.x, point.y);
-	steps = hypot(steps, point.z);
-	d_x = ((end->x - start->x) / steps);
-	d_y = ((end->y - start->y) / steps);
-	d_z = ((end->z - start->z) / steps);
-	point.x = start->x;
-	point.y = start->y;
-	point.z = start->z;
-	while (steps)
+	point_a.x = start->x;
+	point_a.y = start->y;
+	point_a.z = start->z;
+	point_b.x = end->x;
+	point_b.y = end->y;
+	point_b.z = end->z;
+	length = get_line_length(&point_a, &point_b);
+	delta.x = ((point_b.x - point_a.x) / length);
+	delta.y = ((point_b.y - point_a.y) / length);
+	delta.z = ((point_b.z - point_a.z) / length);
+	while (length > 0)
 	{
-		fdf_plot_point(data, &point);
-		point.x += d_x;
-		point.y += d_y;
-		point.z += d_z;
-		--steps;
+		fdf_plot_point(data, &point_a);
+		point_a.x += delta.x;
+		point_a.y += delta.y;
+		point_a.z += delta.z;
+		length -= 1;
 	}
 }
