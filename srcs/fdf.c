@@ -6,7 +6,7 @@
 /*   By: abarnett <alanbarnett328@gmail.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 00:25:11 by abarnett          #+#    #+#             */
-/*   Updated: 2020/05/01 12:17:13 by alan             ###   ########.fr       */
+/*   Updated: 2020/05/02 00:09:11 by alan             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,8 @@ static int			fdf_keys_jumptable(int keycode, struct s_fdf *data)
 	(void)data;
 	return (0);
 }
+
+# endif
 
 /*
 ** Main FDF function. Creates the data struct, draws the image, sets up hooks
